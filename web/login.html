@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkIE - Connexion</title>
+    <link rel="stylesheet" href="./assets/output.css">
+    <link rel="shortcut icon" href="/web/assets/fav.png" type="image/png">
+</head>
+<body class="w-screen h-screen flex flex-col gap-4 px-8 py-16 md:px-16 lg:px-48 xl:justify-center xl:px-[30vw] 2xl:px-[35vw]">
+    <div class="flex flex-row gap-6 items-center">
+        <img src="./assets/link-ie.svg" alt="LinkIE"
+            class="w-12 h-12">
+        <h1 class="font-bold text-3xl">
+            LinkIE
+        </h1>
+    </div>
+    <p class="text-lg">
+        La plateforme qui vous permet de gérer les liens de l'IE
+    </p>
+    <p class="text-lg italic">
+        Connectez-vous avec vos identifiants Tide
+    </p>
+
+    <label for="email">
+        <p class="mb-2">
+            Addresse email
+        </p>
+        <input type="text" id="email" placeholder="prenom.nom"
+            class="px-4 py-3 text-xl font-medium w-full
+                outline-none bg-transparent transition-colors duration-1000
+                border border-black/10">
+    </label>
+    <label for="pass">
+        <p class="mb-2">
+            Mot de passe
+        </p>
+        <input type="password" id="pass" placeholder="votre mot de passe"
+            class="px-4 py-3 text-xl font-medium w-full
+                outline-none bg-transparent transition-colors duration-1000
+                border border-black/10">
+    </label>
+    <button type="submit" id="connexion"
+        class="px-4 py-3 text-xl font-medium cursor-pointer
+            bg-ie text-white hover:bg-ie/85 transition-colors">
+        Connexion
+    </button>
+
+    <script>
+        const email = document.getElementById('email')
+        const pass = document.getElementById('pass')
+        const connexion = document.getElementById('connexion')
+
+        const error = (noeud) => {
+            noeud.classList.toggle('error', true)
+            setTimeout(() => noeud.classList.toggle('error', false), 1000)
+        }
+        connexion.addEventListener('click', async () => {
+            const [e, p] = [email.value, pass.value]
+            if(e.length == 0) error(email)
+            if(p.length == 0) error(pass)
+            if(e.length == 0 || p.length == 0) return
+
+            const response = await fetch('/', {
+                method: 'POST',
+                credentials: 'include',
+                body: JSON.stringify({ 
+                    email: e, pass: p
+                })
+            })
+
+            if(response.ok) {
+                // ...
+            } else {
+                error(email)
+                error(pass)
+                // ...
+            }
+        })
+    </script>
+    <a class="absolute bottom-2 right-2 flex-row gap-1 hidden sm:flex
+        text-xs items-center p-2 hover:bg-pink-400/25
+        transition-colors cursor-pointer rounded-lg">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/>
+        </svg>
+        Participer au développement
+    </a>
+</body>
+</html>

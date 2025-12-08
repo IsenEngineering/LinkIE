@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme{
+    --color-ie: #20396E;
+}
+
+input.error{
+    @apply border-red-500;
+}
+
+#entries > article{
+    @apply p-3 border border-black/10 rounded-lg;
+}
+#entries > article > div{
+    @apply text-xs flex flex-row gap-2 items-center;
+}
+#entries > article > div > span{
+    @apply bg-black/10 px-2 py-1 rounded;
+}
+#entries > article > div > svg{
+    @apply fill-none stroke-black/75 stroke-2 p-1 hover:stroke-black 
+    hover:bg-black/10 rounded cursor-pointer transition-colors;
+}
+#entries > article > h3{
+    @apply text-lg mt-2 font-medium text-black/50;
+}
+#entries > article > h3 > span{
+    @apply text-ie;
+}
+#entries > article > a{
+    @apply text-ie/60 hover:text-ie transition-colors flex flex-row items-center;
+}
+#entries > article > a > svg{
+    @apply fill-none stroke-ie/60 stroke-2 p-1
+    rounded cursor-pointer transition-colors;
+}
+#entries > article > a:hover > svg{
+    @apply stroke-ie
+}
+
+#edit #source > p{
+    @apply text-black/50
+}
+#edit #source > div{
+    @apply flex flex-row flex-wrap md:flex-nowrap gap-1 items-center
+}
+#edit #source > div > input{
+    @apply p-1.5 border outline-none border-black/25 rounded-lg w-64
+}
+#edit #source > div > input#subdomain{
+    @apply text-end w-32
+}
