@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkIE</title>
+    <link rel="stylesheet" href="./assets/output.css">
+    <link rel="shortcut icon" href="/web/assets/fav.png" type="image/png">
+</head>
+<body class="w-screen h-screen">
+    <header class="w-screen p-4 lg:p-6
+        flex gap-y-4 md:gap-y-0 flex-col md:flex-row md:items-center justify-between 
+        border-b border-black/10 md:z-20 relative">
+        <a href="/" class="flex flex-row gap-4 items-center">
+            <img src="./assets/link-ie.svg" alt="LinkIE"
+                class="w-8 h-8">
+            <h1 class="font-bold text-2xl">
+                Link-IE
+            </h1>
+        </a>
+        <nav class="flex flex-row gap-1 md:gap-4 md:text-lg font-medium overflow-x-scroll md:overscroll-none">
+            <a href="./dash.html" class="px-2 py-1 md:px-3 md:py-1.5 hover:bg-ie/25 transition-colors">
+                Domaine
+            </a>
+            <p class="px-2 py-1 md:px-3 md:py-1.5 bg-ie text-white select-none">
+                Debug
+            </p>
+            <a href="" class="px-2 py-1 md:px-3 md:py-1.5 hover:bg-pink-400/25 transition-colors">
+                Déconnexion
+            </a>
+        </nav>
+    </header>
+    <main class="px-4 sm:px-16 md:px-32 lg:px-48 xl:px-64 py-8 flex flex-col gap-4">
+    </main>
+    <a class="absolute bottom-2 right-2 flex-row gap-1 hidden sm:flex
+        text-xs items-center p-2 hover:bg-pink-400/25
+        transition-colors cursor-pointer rounded-lg">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/>
+        </svg>
+        Participer au développement
+    </a>
+    <script defer src="js/debug.js"></script>
+</body>
+</html>

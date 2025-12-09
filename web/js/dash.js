@@ -131,6 +131,26 @@ class Entry {
 }
 
 class Edition {
+    static create() {
+        this.id = Math.floor(Math.random() * 10E8).toString(36)
+        this.subdomain = ""
+        this.path = ""
+        this.destination = ""
+        this.change_type("subdomain")
+        this.node.querySelector('#type').value = this.type
+        this.node.querySelector('#destination').value = this.destination
+        this.node.querySelector('#title-edit').innerText = "Créer une entrée"
+        this.cb = () => {
+            entries.push(
+                new Entry(this.type, {
+                    subdomain: this.subdomain,
+                    path: this.path
+                }, this.destination, this.id)
+            )
+        }
+
+        this.node.hidden = false
+    }
     static open({ id, type, subdomain, path, destination, cb }) {
         this.id = id
         this.subdomain = subdomain
@@ -139,6 +159,7 @@ class Edition {
         this.change_type(type)
         this.node.querySelector('#type').value = this.type
         this.node.querySelector('#destination').value = this.destination
+        this.node.querySelector('#title-edit').innerText = "Modifier l'entrée"
         this.cb = cb
 
         this.node.hidden = false
@@ -185,7 +206,6 @@ class Edition {
                     <input type="text" id="path" placeholder="chemin"
                         value="${ this.path || '' }">
                 </div>`
-                console.log(source.innerHTML)
 
                 subdomain = source.querySelector('#subdomain')
                 subdomain.addEventListener('input', () => this.subdomain = subdomain.value)
@@ -196,6 +216,9 @@ class Edition {
     }
 
     static init() {
+        document.querySelector('#register').addEventListener('click', () => {
+            this.create()
+        })
         this.node = document.getElementById('edit')
 
         this.node.addEventListener('click', ev => {
@@ -216,6 +239,16 @@ class Edition {
         })
 
         this.node.querySelector('#submit-edit').addEventListener('click', async () => {
+            const checks = {
+                subdomain: this.subdomain ? this.subdomain.length > 0 : false,
+                path: this.path ? this.path.length > 0 : false,
+                dest: this.destination.length >0,
+            }
+            
+            if(this.type == 'both' && (!checks.subdomain || !checks.path)) return
+            if(this.type == 'subdomain' && !checks.subdomain) return
+            if(this.type == 'path' && !checks.path) return
+            if(!checks.dest) return
             if(this.cb) await this.cb({
                 id: this.id,
                 subdomain: this.subdomain,
