@@ -1,18 +1,20 @@
-use collection::Collection;
-use auth::{Auth, AuthDriver};
+use crate::collection::Collection;
 
 mod collection;
 mod net;
 mod auth;
+mod redirect;
+mod dash;
 
 #[tokio::main]
 async fn main() {
-    // let mut col = Collection::new(None);
+    let collection = Collection::new(None);
+    let dash = dash::routes();
+    let app = net::app()
+        .merge(dash)
+        .with_state(collection);
 
-    // col.new_subdomain("discord".to_string(), "https://discord.gg/...".to_string());
-
-    // col.save().unwrap();
-    let app = net::app();
-
-    net::serve(app).await;
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:80").await.unwrap();
+    println!("listening on localhost:80  📡...");
+    axum::serve(listener, app).await.unwrap();
 }

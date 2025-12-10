@@ -58,7 +58,7 @@ impl AuthDriver for SurrealDB {
             .map_err(|e| format!("Request failed: {}", e))?;
 
         if !resp.status().is_success() {
-            return Err(format!("Server error: {}", resp.status()))
+            return Err("Forbidden".to_string())
         }
         let text = resp.text().await
             .map_err(|e| format!("Failed to read response: {}", e))?;
@@ -94,7 +94,7 @@ impl AuthDriver for SurrealDB {
             .map_err(|e| format!("Request failed: {}", e))?;
 
         if !resp.status().is_success() {
-            return Err(format!("Server error: {}", resp.status()));
+            return Err("Bad Request".to_string());
         }
 
         let text = resp.bytes().await

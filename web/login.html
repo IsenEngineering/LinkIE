@@ -64,12 +64,18 @@
             const response = await fetch('/', {
                 method: 'POST',
                 credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({ 
-                    email: e, pass: p
+                    user: e, pass: p
                 })
             })
 
             if(response.ok) {
+                setTimeout(() => {
+                    location.assign(new URL("/dash", location.origin))
+                }, 250)
                 // ...
             } else {
                 error(email)

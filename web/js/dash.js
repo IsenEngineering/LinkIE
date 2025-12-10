@@ -264,6 +264,19 @@ class Edition {
 
 Edition.init()
 
-entries.push(new Entry('path', { path: "nani" }, 'https://google.com'))
-entries.push(new Entry('subdomain', { subdomain: "discord" }, 'https://discord.gg'))
-entries.push(new Entry('both', { subdomain: "discord", path: "nani" }, 'https://wg.ie'))
+const main = async () => {
+    const response = await fetch('/dash/collection', {
+        credentials: 'include'
+    })
+
+    const entries = Object.entries(await response.json())
+
+    entries.sort((a, b) => a[0] < b[0] ? -1 : 1)
+    for([id, { subdomain, path, destination }] of entries) {
+        const type = subdomain && path ? 'both' : (subdomain ? 'subdomain' : 'path')
+
+        entries.push(new Entry(type, { path, subdomain }, destination, id))
+    }
+}
+
+main()

@@ -11,6 +11,8 @@ pub struct Link {
 
 type RoutableKey = (Option<String>, Option<String>); // subdomain, path
 type RoutableVal = (String, String); // destination, id
+
+#[derive(Clone)]
 pub struct Collection(HashMap<RoutableKey, RoutableVal>);
 
 fn random_id() -> String {
@@ -62,6 +64,19 @@ impl Collection {
         let file = toml::to_string(&links).expect("HashMap failed to serialize");
     
         fs::write(link_path, file)
+    }
+
+    pub fn list(&self) -> HashMap<String, Link> {
+        let mut map = HashMap::new();
+        for ((subdomain, path), (destination, id)) in self.0.iter() {
+            map.insert(id.clone(),Link {
+                subdomain: subdomain.clone(),
+                destination: destination.clone(),
+                path: path.clone()
+            });
+        }
+
+        map
     }
     pub fn find(&self, key: &RoutableKey) -> Option<&String> {
         match self.0.get(key) {
