@@ -1,10 +1,10 @@
 use axum::{
     extract::{Request, State}, 
-    http::{HeaderMap, StatusCode, request::Parts},
+    http::{HeaderMap, request::Parts},
     middleware::Next, 
     response::{IntoResponse, Redirect, Response}
 };
-use crate::SharedCollection;
+use crate::{SharedCollection, net::not_found};
 
 fn map_path(path: &str) -> Option<String> {
     let path = path.strip_prefix("/").unwrap().to_string();
@@ -37,10 +37,7 @@ async fn redirect(collection: SharedCollection, parts: Parts) -> Response {
         Some(redirection) => {
             Redirect::to(&redirection).into_response()
         },
-        None => {
-            // 404
-            (StatusCode::NOT_FOUND, "Not Found").into_response()
-        }
+        None => not_found().into_response()
     }
 }
 

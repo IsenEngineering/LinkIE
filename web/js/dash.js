@@ -198,7 +198,7 @@ class Edition {
             const resp = await api("link", {
                 method: "POST",
                 body: JSON.stringify({
-                    destination,
+                    destination: this.destination,
                     subdomain: this.subdomain,
                     path: this.path
                 })

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IsenEngineering - Page introuvable</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #20396E;
+            --bg: #0A0E1A;
+            --text: #E8EDF5;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .layer-1, .layer-2 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .layer-1 {
+            background: radial-gradient(circle at 50% 50%, rgba(32, 57, 110, 0.2) 0%, var(--bg) 70%);
+            position: fixed;
+            z-index: 5;
+        }
+        .layer-2 {
+            background-image: url(https://link-ie.isenengineering.fr/assets/tile-ie.svg);
+            background-size: 64px;
+            opacity: 0.075;
+            z-index: 0;
+        }
+        section {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 2rem;
+            max-width: 800px;
+            animation: fadeInUp 1s ease-out;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 404 */
+        .error-code {
+            font-family: system-ui, sans-serif;
+            font-size: clamp(100px, 18vw, 200px);
+            font-weight: 700;
+            color: var(--primary);
+            position: relative;
+            display: inline-block;
+            margin-bottom: -1rem;
+            letter-spacing: -0.05em;
+            line-height: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: clamp(20px, 4vw, 32px);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.5s forwards;
+        }
+
+        p {
+            font-size: clamp(14px, 2vw, 16px);
+            font-weight: 300;
+            color: rgba(232, 237, 245, 0.6);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.7s forwards;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        a {
+            display: inline-block;
+            padding: 16px 48px;
+            background: transparent;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.9s forwards;
+            border: 1px solid var(--primary);
+        }
+
+        a:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 1rem;
+            }
+            nav{
+                flex-direction: column;
+            }
+            .error-code {
+                margin-bottom: unset;
+            }
+        }
+
+        nav{
+            display: flex;
+            gap: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="layer-1">
+    </div>
+    <div class="layer-2">
+    </div>
+
+    <section>
+        <img src="https://link-ie.isenengineering.fr/assets/ie-sm.png" alt="Logo IsenEngineering" width="128" height="128">
+        
+        <div class="error-code">404</div>
+        
+        <h1>Page introuvable</h1>
+        <p>
+            Cette page n'existe pas chez nous.
+        </p>
+        
+        <nav>
+            <a href="https://tide.isenengineering.fr">Tidee</a>
+            <a href="https://discord.isenengineering.fr">Discord</a>
+            <a href="https://ndc.isenengineering.fr">Inscription NDC</a>
+        </nav>
+    </section>
+</body>
+</html>
