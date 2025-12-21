@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LinkIE</title>
-    <link rel="stylesheet" href="./assets/output.css">
-    <link rel="shortcut icon" href="/web/assets/fav.png" type="image/png">
+    <link rel="stylesheet" href="/assets/output.css">
+    <link rel="shortcut icon" href="/assets/fav.png" type="image/png">
 </head>
 <body class="w-screen h-svh">
     <header class="w-screen p-4 lg:p-6
         flex gap-y-4 md:gap-y-0 flex-col md:flex-row md:items-center justify-between 
         border-b border-black/10 md:z-20 relative">
         <a href="/" class="flex flex-row gap-4 items-center">
-            <img src="./assets/link-ie.svg" alt="LinkIE"
+            <img src="/assets/link-ie.svg" alt="LinkIE"
                 class="w-8 h-8">
             <h1 class="font-bold text-2xl">
                 Link-IE
@@ -22,10 +22,10 @@
             <p class="px-2 py-1 md:px-3 md:py-1.5 bg-ie text-white select-none">
                 Domaine
             </p>
-            <a href="./debug.html" class="px-2 py-1 md:px-3 md:py-1.5 hover:bg-ie/25 transition-colors">
+            <!-- <a href="./debug.html" class="px-2 py-1 md:px-3 md:py-1.5 hover:bg-ie/25 transition-colors">
                 Debug
-            </a>
-            <a href="" class="px-2 py-1 md:px-3 md:py-1.5 hover:bg-pink-400/25 transition-colors">
+            </a> -->
+            <a href="/logout" class="px-2 py-1 md:px-3 md:py-1.5 hover:bg-pink-400/25 transition-colors">
                 Déconnexion
             </a>
         </nav>
@@ -87,7 +87,7 @@
             </div>
         </section>
     </dialog>
-    <a class="absolute bottom-2 right-2 flex-row gap-1 hidden sm:flex
+    <a href="https://github.com/IsenEngineering/LinkIE" target="_blank" class="absolute bottom-2 right-2 flex-row gap-1 hidden sm:flex
         text-xs items-center p-2 hover:bg-pink-400/25
         transition-colors cursor-pointer rounded-lg">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" 

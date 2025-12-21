@@ -1,3 +1,20 @@
+async function api(path, payload) {
+    const resp = await fetch("/api/" + path, {
+        credentials: "include",
+        headers: 'body' in payload ? {
+            "Content-Type": "application/json"
+        } : undefined,
+        ...payload
+    })
+
+    if(resp.status != 200) {
+        console.log(resp.status)
+        console.log(await resp.text())
+    }
+
+    return resp
+}
+
 const entries = []
 
 class Entry {
@@ -9,9 +26,10 @@ class Entry {
         this.path = source.path || null
         this.id = id || Math.floor(Math.random() * 10E8).toString(36)
 
+
         this.node = this.create_node()
         this.create_listener()
-
+                
         document.getElementById('entries').append(this.node)
     }
 
@@ -37,16 +55,11 @@ class Entry {
                 subdomain: this.subdomain,
                 path: this.path,
                 destination: this.destination,
-                cb: ({ id, type, subdomain, path, destination }) => {
+                cb: async ({ id, type, subdomain, path, destination }) => {
                     if(id !== this.id) return
 
-                    this.update_destination(destination)
-                    this.type = type
-                    this.subdomain = subdomain
-                    this.path = path
-                    this._update_title()
-
-                    console.log('edited')
+                    await this.update_destination(destination)
+                    await this.update_keys(subdomain, path, type)
                 }
             })
         })
@@ -99,10 +112,45 @@ class Entry {
         return article
     }
 
-    update_destination(destination) {
-        this.destination = destination
+    async update_destination(destination) {
+        const resp = await api("link", {
+            method: "PATCH",
+            body: JSON.stringify({
+                subdomain: this.subdomain,
+                path: this.path,
+                new_destination: destination,
+            })
+        })
 
-        this.node.querySelector('a > span').innerText = destination
+        if(resp.status == 200) {
+            this.destination = destination
+    
+            const a = this.node.querySelector('a > span')
+            a.innerText = destination
+            a.href = destination
+        }
+    }
+    async update_keys(subdomain, path, type) {
+        if(subdomain == this.subdomain && path == this.path) {
+            return
+        }
+
+        const resp = await api("link", {
+            method: 'PATCH',
+            body: JSON.stringify({
+                path: this.path,
+                subdomain: this.subdomain,
+                new_path: path,
+                new_subdomain: subdomain
+            })
+        })
+
+        if(resp.status == 200) {
+            this.path = path
+            this.subdomain = subdomain
+            this.type = type
+            this._update_title()
+        }
     }
 
     _update_title() {
@@ -117,16 +165,22 @@ class Entry {
 
         this.node.querySelector('h3').innerHTML = title
     }
-    update_subdomain(subdomain) {
-        this.subdomain = subdomain
-        this._update_title()
-    }
-    update_path(path) {
-        this.path = path
-        this._update_title()
-    }
-    remove() {
-        this.node.remove()
+    async remove() {
+        // confirmation?
+
+        const resp = await api("link", {
+            method: 'DELETE',
+            body: JSON.stringify({
+                path: this.path,
+                subdomain: this.subdomain
+            })
+        })
+
+        if(resp.status == 200) {
+            const i = entries.findIndex(e => this.id === e.id)
+            if(i >= 0) entries.splice(i, 1)
+            this.node.remove()
+        }
     }
 }
 
@@ -140,13 +194,22 @@ class Edition {
         this.node.querySelector('#type').value = this.type
         this.node.querySelector('#destination').value = this.destination
         this.node.querySelector('#title-edit').innerText = "Créer une entrée"
-        this.cb = () => {
-            entries.push(
-                new Entry(this.type, {
+        this.cb = async () => {
+            const resp = await api("link", {
+                method: "POST",
+                body: JSON.stringify({
+                    destination,
                     subdomain: this.subdomain,
                     path: this.path
-                }, this.destination, this.id)
-            )
+                })
+            })
+            
+            if(resp.status == 200) {
+                entries.push(new Entry(this.type, {
+                    subdomain: this.subdomain,
+                    path: this.path
+                }, this.destination, this.id))
+            }
         }
 
         this.node.hidden = false
@@ -265,9 +328,7 @@ class Edition {
 Edition.init()
 
 const main = async () => {
-    const response = await fetch('/dash/collection', {
-        credentials: 'include'
-    })
+    const response = await api('links', {})
 
     const entries = Object.entries(await response.json())
 

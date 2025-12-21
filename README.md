@@ -18,3 +18,9 @@ Back -> rust
 > - toml
 > - tower-http
 >
+
+
+## Build
+
+`cargo build --release`
+`docker buildx build --platform linux/amd64 -t ghcr.io/isenengineering/link-ie .`

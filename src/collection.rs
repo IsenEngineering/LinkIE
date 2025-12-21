@@ -81,7 +81,12 @@ impl Collection {
     pub fn find(&self, key: &RoutableKey) -> Option<&String> {
         match self.0.get(key) {
             Some((dest, _id)) => Some(dest),
-            None => None
+            None => {
+                if key.0.is_some() && key.1.is_some() {
+                    return self.find(&(key.clone().0, None))
+                }
+                None
+            }
         }
     }
     pub fn find_id(&self, key: &RoutableKey) -> Option<&String> {
@@ -100,31 +105,45 @@ impl Collection {
         self.0.insert(new,value.unwrap().clone());
         self.0.remove(key);
         
+        self.save();
         Ok(())
     }
-    pub fn update_destination(&mut self, key: RoutableKey, destination: String) -> Result<(), ()> {
+    pub fn update_destination(&mut self, key: &RoutableKey, destination: String) -> Result<(), ()> {
         let value = self.0.get(&key);
 
         if value.is_none() {
             return Err(());
         };
 
-        self.0.insert(key, (destination, value.unwrap().1.clone()));
+        self.0.insert(key.clone(), (destination, value.unwrap().1.clone()));
+        self.save();
         Ok(())
     }
     pub fn new_path(&mut self, path: String, destination: String) {
         let id = random_id();
     
         self.0.insert((None, Some(path)), (destination, id));
+        self.save();
     }
     pub fn new_subdomain(&mut self, subdomain: String, destination: String) {
         let id = random_id();
     
         self.0.insert((Some(subdomain), None), (destination, id));
+        self.save();
     }
     pub fn new_subdomain_with_path(&mut self, subdomain: String, path: String, destination: String) {
         let id = random_id();
     
         self.0.insert((Some(subdomain), Some(path)), (destination, id));
+        self.save();
+    }
+    pub fn remove(&mut self, key: RoutableKey) -> Result<(), ()> {
+        match self.0.remove(&key) {
+            Some(_) => {
+                self.save();
+                Ok(())
+            },
+            None => Err(())
+        }
     }
 }
