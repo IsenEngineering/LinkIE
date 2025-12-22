@@ -3,6 +3,7 @@ WORKDIR /app
 
 COPY src src
 COPY Cargo* .
+COPY web web
 
 RUN rustup target add x86_64-unknown-linux-musl \
     && apk add openssl-dev build-base openssl-libs-static pkgconfig
