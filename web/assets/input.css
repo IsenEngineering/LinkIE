@@ -2,6 +2,10 @@
 
 @theme{
     --color-ie: #20396E;
+    --color-sombre: #090909;
+}
+body {
+    @apply bg-sombre text-white
 }
 
 input.error{
@@ -9,33 +13,33 @@ input.error{
 }
 
 #entries > article{
-    @apply p-3 border border-black/10 rounded-lg;
+    @apply p-3 border border-white/10 rounded-lg bg-white/5 backdrop-blur-3xl; 
 }
 #entries > article > div{
     @apply text-xs flex flex-row gap-2 items-center;
 }
 #entries > article > div > span{
-    @apply bg-black/10 px-2 py-1 rounded;
+    @apply bg-white/10 px-2 py-1 rounded;
 }
 #entries > article > div > svg{
-    @apply fill-none stroke-black/75 stroke-2 p-1 hover:stroke-black 
+    @apply fill-none stroke-white/75 stroke-2 p-1 hover:stroke-white 
     hover:bg-black/10 rounded cursor-pointer transition-colors;
 }
 #entries > article > h3{
-    @apply text-lg mt-2 font-medium text-black/50;
+    @apply text-lg mt-2 font-medium text-white/40;
 }
 #entries > article > h3 > span{
-    @apply text-ie;
+    @apply text-white;
 }
 #entries > article > a{
-    @apply text-ie/60 hover:text-ie transition-colors flex flex-row items-center;
+    @apply text-white/60 hover:text-white font-medium transition-colors flex flex-row items-center;
 }
 #entries > article > a > svg{
-    @apply fill-none stroke-ie/60 stroke-2 p-1
+    @apply fill-none stroke-white/60 stroke-2 p-1
     rounded cursor-pointer transition-colors;
 }
 #entries > article > a:hover > svg{
-    @apply stroke-ie
+    @apply stroke-white
 }
 
 #edit #source > p{

@@ -1,37 +1,35 @@
-use axum::{extract::Request, http::HeaderMap, middleware::Next, response::{IntoResponse, Redirect, Response}};
-use crate::auth::{Auth, AuthDriver};
+use axum::{extract::{FromRequestParts, Request, State}, middleware::Next, response::{IntoResponse, Redirect, Response}};
+use axum_cookie::CookieManager;
 
-fn extract_token(headers: &HeaderMap) -> Result<String, ()> {
-    if let Some(cookie_header) = headers.get("cookie") {
-        for pair in cookie_header.to_str().unwrap().split("; ") {
-            let mut parts = pair.splitn(2, '=');
-            let name = parts.next();
-            let value = parts.next();
+use crate::{AppState, auth::Session};
 
-            if name == Some("token") {
-                let jwt = value.unwrap().to_string();
-                return Ok(jwt)
-            }
+pub async fn authentificated(State(state): State<AppState>, req: Request, next: Next) -> Response {
+    let (mut parts, body) = req.into_parts();
+    let cookies = CookieManager::from_request_parts(&mut parts, &state).await;
+
+    if let Ok(cookies) = cookies {
+        let session = Session::from_cookie(&cookies).await;
+        if let Some((_id, _session)) = session {
+            let req = Request::from_parts(parts, body);
+                                    
+            return next.run(req).await
         }
     }
-    Err(())
-}
-pub async fn authentificated(req: Request, next: Next) -> Response {
-    match extract_token(req.headers()) {
-        Ok(jwt) => match Auth::authentificate(jwt).await {
-            Ok(()) => next.run(req).await,
-            Err(_) => Redirect::to("/").into_response()
-        }
-        Err(()) => Redirect::to("/").into_response()
-    }
+
+    Redirect::to("/").into_response()
 } 
 
-pub async fn redirect_if_authentificated(req: Request, next: Next) -> Response {
-    match extract_token(req.headers()) {
-        Ok(jwt) => match Auth::authentificate(jwt).await {
-            Ok(()) => Redirect::to("/dash").into_response(),
-            Err(_) => next.run(req).await
+pub async fn redirect_if_authentificated(State(state): State<AppState>, req: Request, next: Next) -> Response {
+    let (mut parts, body) = req.into_parts();
+    let cookies = CookieManager::from_request_parts(&mut parts, &state).await;
+
+    if let Ok(cookies) = cookies {
+        let session = Session::from_cookie(&cookies).await;
+        if let Some((_id, _session)) = session {
+            return Redirect::to("/dash").into_response()
         }
-        Err(()) => next.run(req).await
     }
+    
+    let req = Request::from_parts(parts, body);
+    return next.run(req).await
 }

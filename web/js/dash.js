@@ -7,11 +7,8 @@ async function api(path, payload) {
         ...payload
     })
 
-    if(resp.status != 200) {
-        console.log(resp.status)
-        console.log(await resp.text())
-    }
-
+    if(resp.status != 200) 
+        console.error(resp.status, await resp.text())
     return resp
 }
 
@@ -48,7 +45,6 @@ class Entry {
         const del = this.node.querySelector('.delete')
 
         edit.addEventListener('click', () => {
-            console.log('edit')
             Edition.open({
                 id: this.id,
                 type: this.type,
@@ -73,7 +69,7 @@ class Entry {
     create_node() {
         const nav = document.createElement('div')
         nav.innerHTML = `
-        <span class="bg-black/10 px-2 py-1 rounded ">
+        <span class="bg-white/10 px-2 py-1 rounded ">
             ${ this.display_type() }
         </span>
         <svg width="24" height="24" viewBox="0 0 24 24" class="edit">

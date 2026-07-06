@@ -1,3 +1,7 @@
 /target
 links.toml
 **/.DS_Store
+**/node_modules
+
+**/.env*
+sessions

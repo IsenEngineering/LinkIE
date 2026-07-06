@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IsenEngineering - Page introuvable</title>
     <style>
+        
         * {
             margin: 0;
             padding: 0;
@@ -13,77 +14,65 @@
 
         :root {
             --primary: #20396E;
-            --bg: #0A0E1A;
-            --text: #E8EDF5;
         }
 
         body {
-            font-family: sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            overflow-x: hidden;
-            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: white;
+            width: 100dvw;
+            height: 100dvh;
+            overflow: hidden;
+            padding: 4em;
+
             display: flex;
-            align-items: center;
+            flex-direction: row;
             justify-content: center;
+            align-items: center;
+            gap: 32px;
             position: relative;
+
+            background-image: linear-gradient(45deg, #20396E, #090909);
         }
 
-        .layer-1, .layer-2 {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .fond {
+            position: absolute;
+            z-index: -10;
             width: 100%;
             height: 100%;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
         }
-        .layer-1 {
-            background: radial-gradient(circle at 50% 50%, rgba(32, 57, 110, 0.2) 0%, var(--bg) 70%);
-            position: fixed;
-            z-index: 5;
-        }
-        .layer-2 {
-            background-image: url(https://link-ie.isenengineering.fr/assets/tile-ie.svg);
-            background-size: 64px;
-            opacity: 0.075;
-            z-index: 0;
-        }
-        section {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            padding: 2rem;
-            max-width: 800px;
-            animation: fadeInUp 1s ease-out;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        
+        .titre-404 {
+            width: 64em;
+            opacity: 0;
+            animation: fadeFromLeft .5s ease-out 0.5s forwards;
         }
 
-        @keyframes fadeInUp {
+        section > img {
+            opacity: 0;
+            animation: fadeIn .5s ease-out 0.5s forwards;
+        }
+
+        @keyframes fadeFromLeft {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translate(-12.5%, -6.25%);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translate(0, 0);
             }
         }
-
-        /* 404 */
-        .error-code {
-            font-family: system-ui, sans-serif;
-            font-size: clamp(100px, 18vw, 200px);
-            font-weight: 700;
-            color: var(--primary);
-            position: relative;
-            display: inline-block;
-            margin-bottom: -1rem;
-            letter-spacing: -0.05em;
-            line-height: 1;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -95,8 +84,8 @@
 
         h1 {
             font-size: clamp(20px, 4vw, 32px);
-            font-weight: 600;
-            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            font-weight: 900;
             color: var(--text);
             opacity: 0;
             animation: fadeIn 1s ease-out 0.5s forwards;
@@ -105,69 +94,79 @@
         p {
             font-size: clamp(14px, 2vw, 16px);
             font-weight: 300;
-            color: rgba(232, 237, 245, 0.6);
-            margin-bottom: 2rem;
-            line-height: 1.8;
+            color: #FFF8;
+            margin-bottom: 1rem;
             opacity: 0;
             animation: fadeIn 1s ease-out 0.7s forwards;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         a {
-            display: inline-block;
-            padding: 16px 48px;
-            background: transparent;
-            color: var(--text);
+            padding: 12px 32px;
+
+            background: #FFF1;
+            color: white;
+            border: 1px solid var(--primary);
+
             text-decoration: none;
             font-weight: 600;
-            font-size: 16px;
             border-radius: 4px;
-            transition: all 0.3s ease;
+            
             opacity: 0;
             animation: fadeIn 1s ease-out 0.9s forwards;
-            border: 1px solid var(--primary);
+            transition: background .3s ease, border-color .3s ease;
         }
 
         a:hover {
-            background: var(--primary);
-            border-color: var(--primary);
+            background: hsl(222, 50%, 25%);
+            border-color: #FFF1;
         }
 
-        @media (max-width: 768px) {
-            section {
-                padding: 1rem;
-            }
-            nav{
-                flex-direction: column;
-            }
-            .error-code {
-                margin-bottom: unset;
-            }
-        }
 
         nav{
             display: flex;
+            flex-wrap: wrap;
             gap: 16px;
         }
+
+        @media (width < 1200px) {
+            body {
+                padding: 1em;
+                gap: 64px;
+                flex-direction: column;
+            }
+            .titre-404 {
+                width: 100%;
+            }
+            section > img {
+                display: none;
+            }
+        }
+        
     </style>
 </head>
 <body>
-    <div class="layer-1">
-    </div>
-    <div class="layer-2">
-    </div>
+    <svg xmlns="http://www.w3.org/2000/svg" class="fond">
+        <defs>
+            <pattern id="a" width="50" height="50" patternUnits="userSpaceOnUse">
+                <path fill="none" stroke="#fff2" stroke-linecap="square" stroke-width=".5" d="M8.25 10h13.5M15 3.25v13.5"/>
+            </pattern>
+        </defs>
+        <rect width="500%" height="500%" fill="url(#a)"/>
+    </svg>
+
+    <svg class="titre-404" viewBox="0 0 1011 391" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 322V247L151 5H223V111H182L100 240V243H323V322H0ZM183 380V298L185 263V5H278V380H183Z" fill="white"/>
+        <path d="M504 391C470 391 440 383 415 367C391 351 371 329 358 299C345 270 338 235 338 194C338 152 345 117 358 88C372 59 391 38 415 23C440 8 470 0 504 0C538 0 567 8 592 23C617 38 636 60 649 89C663 117 669 152 669 194C669 235 663 270 649 300C636 329 617 352 592 367C567 383 538 391 504 391ZM504 308C521 308 536 299 547 280C558 262 563 233 564 194C564 168 561 147 556 130C551 114 544 102 535 94C526 86 515 82 504 82C486 82 472 91 461 109C449 127 444 155 444 194C443 220 446 241 451 258C456 275 463 288 472 296C481 304 492 308 504 308Z" fill="white"/>
+        <path d="M688 322V243L839 5H910V111H869L788 240V243H1011V322H688ZM870 380V298L872 263V5H968V380H870Z" fill="white"/>
+    </svg>
 
     <section>
         <img src="https://link-ie.isenengineering.fr/assets/ie-sm.png" alt="Logo IsenEngineering" width="128" height="128">
         
-        <div class="error-code">404</div>
-        
-        <h1>Page introuvable</h1>
-        <p>
-            Cette page n'existe pas chez nous.
-        </p>
+        <div>
+            <h1>Page introuvable</h1>
+            <p>Cette page n'existe pas.</p>
+        </div>
         
         <nav>
             <a href="https://tide.isenengineering.fr">Tidee</a>

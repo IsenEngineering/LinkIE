@@ -1,9 +1,8 @@
-// mod surreal;
-mod http_surreal;
+mod config;
+mod routes;
+mod session;
+pub mod state;
 
-pub trait AuthDriver {
-    async fn login(user: String, pass: String) -> Result<String, String>;
-    async fn authentificate(token: String) -> Result<(), String>;
-}
-
-pub type Auth = http_surreal::SurrealDB;
+pub use routes::routes;
+pub use state::Auth;
+pub use session::{Session, filter_outdated_sessions};

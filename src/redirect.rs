@@ -4,7 +4,7 @@ use axum::{
     middleware::Next, 
     response::{IntoResponse, Redirect, Response}
 };
-use crate::{SharedCollection, net::not_found};
+use crate::{dash::Collection, net::not_found};
 
 fn map_path(path: &str) -> Option<String> {
     let path = path.strip_prefix("/").unwrap().to_string();
@@ -28,21 +28,25 @@ fn map_host(headers: &HeaderMap) -> Option<String> {
     host.strip_suffix(".isenengineering.fr")
         .and_then(|subdomain| Some(subdomain.to_string()))
 }
-async fn redirect(collection: SharedCollection, parts: Parts) -> Response {
+
+async fn redirect(collection: Collection, parts: Parts) -> Response {
     let path = map_path(parts.uri.path());
     let host = map_host(&parts.headers);
     let key = (host, path);
 
-    match collection.read().await.find(&key) {
+    let guard = collection.0.read().await;
+    let redirection = guard.get(&key);
+
+    match redirection {
         Some(redirection) => {
-            Redirect::to(&redirection).into_response()
+            Redirect::to(&redirection.0).into_response()
         },
         None => not_found().into_response()
     }
 }
 
 pub async fn dash_middleware(
-    State(collection): State<SharedCollection>,
+    State(collection): State<Collection>,
     request: Request,
     next: Next,
 ) -> Response {
@@ -54,10 +58,12 @@ pub async fn dash_middleware(
         .and_then(|h| h.to_str().ok());
     
     match host {
+        // dashboard routes -> handle
         Some(h) if dashboard_host.iter().any(|&allowed| h.starts_with(allowed)) => {
             // dashboard response
             next.run(request).await
         }
+        // other routes -> redirects to the registered path
         _ => {
             let (parts, _) = request.into_parts();
 
