@@ -35,22 +35,13 @@ async fn create_link(
     State(mut collection): State<Collection>,
     Json(payload): Json<CreateRequest>,
 ) -> Result<(StatusCode, &'static str), &'static str> {
-    match (payload.subdomain, payload.path) {
-        (Some(subdomain), Some(path)) => {
-            collection.new_subdomain_with_path(subdomain, path, payload.destination).await;
-        },
-        (None, Some(path)) => {
-            collection.new_path(path, payload.destination).await;
-        },
-        (Some(subdomain), None) => {
-            collection.new_subdomain(subdomain, payload.destination).await;
-        },
-        (None, None) => {
-            return Err("Impossible de créer une redirection sans sous-domaine ou chemin")
-        }
+    if payload.subdomain.is_none() && payload.path.is_none() {
+        return Err("Impossible de créer une redirection sans sous-domaine ou chemin")
     }
+
+    collection.new_pair((payload.subdomain, payload.path), payload.destination).await;
     
-    Ok((StatusCode::CREATED,"Redirection créée"))
+    Ok((StatusCode::CREATED, "Redirection créée"))
 }
 
 async fn update_link(
@@ -58,20 +49,17 @@ async fn update_link(
     Json(payload): Json<UpdateRequest>,
 ) -> Result<&'static str, (StatusCode, &'static str)> {
     let key = (payload.subdomain, payload.path);
-    let id = collection.find_id(&key).await;
 
-    if id.is_none() {
-        return Err((StatusCode::NOT_FOUND, "Cette redirection n'existe pas"))
-    }
-    
-    if let Some(dest) = payload.new_destination &&
-        let Err(()) = collection.update_destination(&key, dest).await {
-        // en théorie cette condition ne sera jamais remplie
+    if let Some(dest) = payload.new_destination && 
+        let None = collection.update_destination(&key, dest).await {
         return Err((StatusCode::NOT_FOUND, "Cette redirection n'existe pas"))
     }
 
     if payload.new_path.is_some() || payload.new_subdomain.is_some() {
-        collection.update_key(&key, (payload.new_subdomain, payload.new_path)).await.unwrap();
+        let new_key = (payload.new_subdomain, payload.new_path);
+        if let None = collection.update_key(&key, new_key).await {
+            return Err((StatusCode::NOT_FOUND, "Cette redirection n'existe pas"))
+        }
     }
 
     Ok("Ok")
@@ -81,11 +69,9 @@ async fn delete_link(
     State(mut collection): State<Collection>,
     Json(payload): Json<DeleteRequest>,
 ) -> Result<&'static str, (StatusCode, &'static str)> {
-    let key = (payload.subdomain, payload.path);
-
-    match collection.remove(key).await {
-        Ok(()) => Ok("Supprimé"),
-        Err(()) => Err((StatusCode::NOT_FOUND, "Cette redirection n'existe pas"))
+    match collection.remove((payload.subdomain, payload.path)).await {
+        Some(()) => Ok("Supprimé"),
+        None => Err((StatusCode::NOT_FOUND, "Cette redirection n'existe pas"))
     }
 }
 

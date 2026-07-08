@@ -29,7 +29,6 @@ fn random_id() -> String {
         .collect()
 }
 
-#[allow(unused)]
 impl Collection {
     // Create a new collection of redirections from a toml file
     pub fn new(path: Option<&str>) -> Self {
@@ -40,15 +39,13 @@ impl Collection {
         };
     
         let file = fs::read_to_string(link_path).unwrap();
-        let links: HashMap<String, Link> = match toml::from_str(&file) {
-            Ok(h) => h,
-            Err(_e) => HashMap::new()
-        };
 
         let mut col = HashMap::new();
-        for (id, link) in links {
-            col.insert((link.subdomain, link.path), (link.destination, id));
-        }
+        if let Ok(links) = toml::from_str::<HashMap<String, Link>>(&file) {
+            for (id, link) in links {
+                col.insert((link.subdomain, link.path), (link.destination, id));
+            }
+        } 
 
         Self(Arc::new(RwLock::new(col)))
     }
@@ -87,13 +84,13 @@ impl Collection {
 
         map
     }
-    pub async fn find(&self, key: &RoutableKey) -> Option<String> {
+    pub async fn find(&self, key: &RoutableKey) -> Option<RoutableVal> {
         let guard = self.0.read().await;
         
         // try for perfect catch
         match guard.get(key) {
             // perfect catch
-            Some(value) => return Some(value.0.to_string()),
+            Some(value) => return Some(value.clone()),
             // confirm whether we can strip path from the search
             None if key.0.is_none() || key.1.is_none() => return None,
             _ => {}
@@ -101,84 +98,50 @@ impl Collection {
         
         // try to catch without the path just with subdomain
         guard.get(&(key.clone().0, None))
-            .and_then(|value| Some(value.0.to_string()))
+            .and_then(|value| Some(value.clone()))
     }
     
-    pub async fn find_id(&self, key: &RoutableKey) -> Option<String> {
-        let guard = self.0.read().await;
-
-        guard.get(key).and_then(|value| Some(value.1.to_string()))
-    }
-
-    pub async fn update_key(&mut self, key: &RoutableKey, new: RoutableKey) -> Result<(), ()> {
-        let guard = self.0.read().await;
-        let value = guard.get(key);
-
-        if value.is_none() {
-            return Err(());
-        };
-
-        let mut guard = self.0.write().await;
-        guard.insert(new,value.unwrap().clone());
-        guard.remove(key);
+    pub async fn update_key(&mut self, key: &RoutableKey, new: RoutableKey) -> Option<()> {
+        if let Some(value) = self.find(&key).await {
+            let mut guard = self.0.write().await;
+            guard.insert(new,value);
+            guard.remove(key);
+        } else {
+            return None
+        }
         
-        drop(guard);
-        self.save().await.map_err(|_| ())
+        self.save().await.ok()
     }
 
-    pub async fn update_destination(&mut self, key: &RoutableKey, destination: String) -> Result<(), ()> {
-        let guard = self.0.read().await;
-        let value = guard.get(&key);
+    pub async fn update_destination(&mut self, key: &RoutableKey, destination: String) -> Option<()> {
+        if let Some(value) = self.find(&key).await {
+            let mut guard = self.0.write().await;
+            guard.insert(key.clone(), (destination, value.1));
+        } else {
+            return None
+        }
 
-        if value.is_none() {
-            return Err(());
-        };
-
-        let mut guard = self.0.write().await;
-        guard.insert(key.clone(), (destination, value.unwrap().1.clone()));
-        guard.remove(key);
-
-        drop(guard);
-        self.save().await.map_err(|_| ())
+        self.save().await.ok()
     }
 
-    pub async fn new_path(&mut self, path: String, destination: String) {
+    pub async fn new_pair(&mut self, key: RoutableKey, destination: String) -> Option<()> {
         let id = random_id();
     
-        let mut guard = self.0.write().await;
-        guard.insert((None, Some(path)), (destination, id));
-        
-        drop(guard);
-        self.save().await;
-    }
-    pub async fn new_subdomain(&mut self, subdomain: String, destination: String) {
-        let id = random_id();
-    
-        let mut guard = self.0.write().await;
-        guard.insert((Some(subdomain), None), (destination, id));
-        
-        drop(guard);
-        self.save().await;
-    }
-    pub async fn new_subdomain_with_path(&mut self, subdomain: String, path: String, destination: String) {
-        let id = random_id();
-    
-        let mut guard = self.0.write().await;
-        guard.insert((Some(subdomain), Some(path)), (destination, id));
-        
-        drop(guard);
-        self.save().await;
+        {
+            let mut guard = self.0.write().await;
+            guard.insert(key, (destination, id));
+        }
+
+        self.save().await.ok()
     }
 
-    pub async fn remove(&mut self, key: RoutableKey) -> Result<(), ()> {
-        let mut guard= self.0.write().await;
+    pub async fn remove(&mut self, key: RoutableKey) -> Option<()> {
+        {
+            let mut guard= self.0.write().await;
+            guard.remove(&key);
+        }
 
-        guard.remove(&key)
-            .and_then(|_| {
-                self.save();
-                Some(())
-            })
-            .ok_or(())
+        self.save().await.ok()
     }
 }
 

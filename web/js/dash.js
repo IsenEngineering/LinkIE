@@ -200,7 +200,7 @@ class Edition {
                 })
             })
             
-            if(resp.status == 200) {
+            if(resp.status == 201) {
                 entries.push(new Entry(this.type, {
                     subdomain: this.subdomain,
                     path: this.path

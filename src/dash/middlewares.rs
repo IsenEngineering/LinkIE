@@ -16,7 +16,11 @@ pub async fn authentificated(State(state): State<AppState>, req: Request, next: 
         }
     }
 
-    Redirect::to("/").into_response()
+    if parts.uri.path().starts_with("/link") {
+        return axum::http::StatusCode::UNAUTHORIZED.into_response()
+    } else {
+        Redirect::to("/").into_response()
+    }
 } 
 
 pub async fn redirect_if_authentificated(State(state): State<AppState>, req: Request, next: Next) -> Response {
