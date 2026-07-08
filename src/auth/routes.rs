@@ -99,7 +99,9 @@ async fn validate(State(mut state): State<Auth>, cookies: CookieManager, params:
     let age: Duration = Duration::from_secs(expiration as u64) - UNIX_EPOCH.elapsed().unwrap();
     
     let cookie = Cookie::new("id", session_id)
-        .with_domain("localhost")
+        .with_domain("link-ie.isenengineering.fr")
+        .with_secure(true)
+        .with_http_only(true)
         .with_max_age(age)
         .with_path("/")
         .with_same_site(axum_cookie::cookie::cookie::SameSite::Strict);

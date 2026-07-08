@@ -23,7 +23,6 @@ const AUTH_CLEANUP: Duration = Duration::from_secs(300);
 
 #[tokio::main]
 async fn main() {
-    dotenv::dotenv().unwrap();
     let state = AppState {
         collection: Collection::new(None),
         auth: Auth::new()

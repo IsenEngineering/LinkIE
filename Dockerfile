@@ -18,7 +18,6 @@ WORKDIR /app
 
 COPY web web
 COPY --from=build /app/target/x86_64-unknown-linux-musl/release/link-ie .
-RUN touch links.toml
 
 EXPOSE 80
 CMD [ "/app/link-ie" ]

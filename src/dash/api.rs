@@ -68,11 +68,17 @@ async fn update_link(
 async fn delete_link(
     State(mut collection): State<Collection>,
     Json(payload): Json<DeleteRequest>,
-) -> Result<&'static str, (StatusCode, &'static str)> {
-    match collection.remove((payload.subdomain, payload.path)).await {
+) -> Result<&'static str, (StatusCode, String)> {
+    let resp = match collection.remove((payload.subdomain, payload.path)).await {
         Some(()) => Ok("Supprimé"),
-        None => Err((StatusCode::NOT_FOUND, "Cette redirection n'existe pas"))
+        None => Err((StatusCode::NOT_FOUND, "Cette redirection n'existe pas".to_string()))
+    };
+
+    if let Err(e) = collection.save().await {
+        return Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
     }
+
+    resp
 }
 
 pub fn endpoints(state: AppState) -> Router<AppState> {

@@ -116,7 +116,7 @@ impl OidcConfig {
             self.client_id,
             Some(self.secret),
         ).set_redirect_uri(
-            RedirectUrl::new("http://localhost/auth/validate".to_string()).unwrap()
+            RedirectUrl::new("https://link-ie.isenengineering.fr/auth/validate".to_string()).unwrap()
         ).set_revocation_url(RevocationUrl::new(revocation_endpoint).unwrap())
     }
 }
